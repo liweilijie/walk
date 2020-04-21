@@ -7,6 +7,7 @@ use walkdir::WalkDir;
 
 fn walk<P: AsRef<Path>>(path: P) -> Result<(), Error> {
     let mut count = 0;
+    let mut matched = 0;
     for entry in WalkDir::new(path) {
         // let entry = entry?; // TODO:
         let entry = match entry {
@@ -17,17 +18,20 @@ fn walk<P: AsRef<Path>>(path: P) -> Result<(), Error> {
             Ok(entry) => entry,
         };
 
+        // println!("{}", entry.path().display());
+        count += 1;
+
         if entry.file_type().is_dir() {
             continue;
         }
         let name = entry.file_name();
         if let Some(s) = name.to_str() {
             if s.to_ascii_lowercase().ends_with(".jpg") {
-                count += 1;
+                matched += 1;
             }
         }
     }
-    println!("{}", count);
+    println!("total:{} and matched:{}", count, matched);
     Ok(())
 }
 
